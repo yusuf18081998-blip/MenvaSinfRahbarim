@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mening Ustozim — Fotimaxon opa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF3E2;
+    --paper-2:#F3E8D2;
+    --paper-shadow:#D9C9A6;
+    --ink:#2B2118;
+    --ink-soft:#5A4A3A;
+    --maroon:#7A2E27;
+    --maroon-dark:#511E19;
+    --gold:#B6873A;
+    --gold-light:#D9B873;
+    --desk-1:#1C1410;
+    --desk-2:#2E211A;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(255,225,170,0.07), transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.5), transparent 60%),
+      linear-gradient(160deg, var(--desk-2), var(--desk-1));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Lora', serif;
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+  }
+
+  .stage{
+    position:relative;
+    width:min(94vw, 560px);
+    height:min(92vh, 760px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .book-wrap{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+
+  /* stacked pages illusion behind the book */
+  .stack{
+    position:absolute;
+    inset:0;
+    border-radius:6px;
+    background:var(--paper-2);
+  }
+  .stack.s1{ transform:translate(6px,7px) rotate(0.6deg); background:#EFE2C7; box-shadow:0 10px 25px rgba(0,0,0,.35);}
+  .stack.s2{ transform:translate(11px,13px) rotate(1.1deg); background:#E7D8B8; box-shadow:0 14px 30px rgba(0,0,0,.4);}
+
+  .book{
+    position:absolute;
+    inset:0;
+    background:var(--paper);
+    border-radius:6px;
+    box-shadow:
+      0 2px 0 rgba(255,255,255,.4) inset,
+      0 24px 50px rgba(0,0,0,.55),
+      0 2px 8px rgba(0,0,0,.3);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .book::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.08), transparent 55%),
+      radial-gradient(ellipse at 0% 100%, rgba(0,0,0,0.05), transparent 50%);
+  }
+  /* spine shadow on left edge */
+  .book::before{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; left:0;
+    width:26px;
+    background:linear-gradient(90deg, rgba(0,0,0,0.16), transparent);
+    pointer-events:none;
+    z-index:5;
+  }
+
+  .ribbon{
+    position:absolute;
+    top:-2px;
+    right:54px;
+    width:22px;
+    height:64px;
+    background:linear-gradient(180deg, var(--maroon), var(--maroon-dark));
+    z-index:6;
+    clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%);
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+  }
+
+  .running-header{
+    flex:0 0 auto;
+    text-align:center;
+    padding:22px 20px 0;
+    font-family:'Jost',sans-serif;
+    font-size:10.5px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--gold);
+    opacity:.85;
+    height:18px;
+  }
+
+  .content-area{
+    flex:1 1 auto;
+    overflow:hidden;
+    position:relative;
+    display:flex;
+  }
+
+  .page-content{
+    flex:1 1 auto;
+    padding:14px 38px 10px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    transition:opacity .26s ease, transform .26s ease;
+    overflow:hidden;
+  }
+  .page-content.fading{
+    opacity:0;
+    transform:translateY(8px) scale(.985);
+  }
+
+  .body-text{
+    font-family:'Lora',serif;
+    font-size:clamp(14.5px, 2.6vw, 16.5px);
+    line-height:1.78;
+    color:var(--ink);
+    text-align:left;
+  }
+  .body-text.dropcap::first-letter{
+    font-family:'Playfair Display',serif;
+    font-size:3.4em;
+    font-weight:700;
+    color:var(--maroon);
+    float:left;
+    line-height:0.78;
+    padding-right:8px;
+    padding-top:4px;
+  }
+
+  /* ---- Cover ---- */
+  .cover{
+    flex:1;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(217,184,115,0.12), transparent 55%),
+      linear-gradient(170deg, var(--maroon), var(--maroon-dark));
+    color:var(--paper);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 30px;
+    position:relative;
+    border:1px solid rgba(217,184,115,.25);
+  }
+  .cover-frame{
+    position:absolute;
+    inset:14px;
+    border:1.5px solid rgba(217,184,115,.55);
+    border-radius:2px;
+    pointer-events:none;
+  }
+  .cover-frame::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(217,184,115,.3);
+  }
+  .seal{
+    width:64px; height:64px;
+    border-radius:50%;
+    border:2px solid var(--gold-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Playfair Display',serif;
+    font-size:20px;
+    color:var(--gold-light);
+    margin-bottom:22px;
+    box-shadow:0 0 0 4px rgba(217,184,115,.12);
+  }
+  .cover-eyebrow{
+    font-family:'Jost',sans-serif;
+    letter-spacing:4px;
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--gold-light);
+    margin-bottom:14px;
+  }
+  .cover-title{
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    font-size:clamp(30px,7vw,42px);
+    line-height:1.15;
+    margin:0 0 10px;
+  }
+  .cover-subtitle{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(15px,3.4vw,18px);
+    color:var(--gold-light);
+    margin:0 0 30px;
+  }
+  .cover-divider{
+    width:60px; height:1px;
+    background:var(--gold-light);
+    opacity:.7;
+    margin:0 0 26px;
+  }
+  .cover-author{
+    font-family:'Jost',sans-serif;
+    font-size:14px;
+    letter-spacing:1px;
+    color:var(--paper);
+    margin-bottom:4px;
+  }
+  .cover-school{
+    font-family:'Jost',sans-serif;
+    font-size:11.5px;
+    letter-spacing:1.5px;
+    color:rgba(251,243,226,.7);
+    text-transform:uppercase;
+  }
+  .cover-hint{
+    position:absolute;
+    bottom:20px;
+    left:0; right:0;
+    text-align:center;
+    font-family:'Jost',sans-serif;
+    font-size:10.5px;
+    letter-spacing:1.5px;
+    color:rgba(217,184,115,.75);
+  }
+
+  /* ---- Dedication / closing (also maroon-toned) ---- */
+  .feature{
+    flex:1;
+    background:linear-gradient(170deg, var(--maroon), var(--maroon-dark));
+    color:var(--paper);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:50px 36px;
+    position:relative;
+  }
+  .feature-frame{
+    position:absolute; inset:14px;
+    border:1px solid rgba(217,184,115,.4);
+  }
+  .feature-label{
+    font-family:'Jost',sans-serif;
+    letter-spacing:3px;
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--gold-light);
+    margin-bottom:18px;
+  }
+  .feature-text{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:clamp(15px,3.6vw,18.5px);
+    line-height:1.75;
+    white-space:pre-line;
+    max-width:380px;
+  }
+  .feature-sign{
+    margin-top:26px;
+    font-family:'Jost',sans-serif;
+    font-size:12.5px;
+    letter-spacing:1px;
+    color:var(--gold-light);
+    white-space:pre-line;
+    line-height:1.9;
+  }
+
+  /* ---- Chapter divider ---- */
+  .chapter{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    padding:30px;
+  }
+  .chapter-num{
+    font-family:'Playfair Display',serif;
+    font-size:130px;
+    font-weight:700;
+    color:var(--paper-shadow);
+    opacity:.55;
+    line-height:1;
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-58%);
+    z-index:0;
+    user-select:none;
+  }
+  .chapter-eyebrow{
+    position:relative; z-index:1;
+    font-family:'Jost',sans-serif;
+    letter-spacing:3px;
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--maroon);
+    margin-bottom:10px;
+  }
+  .chapter-title{
+    position:relative; z-index:1;
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    font-size:clamp(22px,5vw,28px);
+    color:var(--ink);
+    margin-bottom:10px;
+  }
+  .chapter-rule{
+    position:relative; z-index:1;
+    width:46px; height:2px;
+    background:var(--gold);
+    margin:6px 0 14px;
+  }
+  .chapter-subtitle{
+    position:relative; z-index:1;
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:clamp(15px,3.6vw,18px);
+    color:var(--ink-soft);
+  }
+
+  /* ---- nav ---- */
+  .nav-btn{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:38px;height:38px;
+    border-radius:50%;
+    border:1px solid rgba(217,184,115,.6);
+    background:rgba(255,255,255,.06);
+    color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;
+    cursor:pointer;
+    z-index:20;
+    opacity:.0;
+    transition:opacity .2s ease, background .2s ease;
+  }
+  .stage:hover .nav-btn{opacity:.85;}
+  .nav-btn:hover{background:rgba(255,255,255,.14);}
+  .nav-btn.prev{left:-50px;}
+  .nav-btn.next{right:-50px;}
+  .nav-btn.disabled{opacity:.15 !important; cursor:default;}
+  @media (max-width:700px){
+    .nav-btn{display:none;}
+  }
+
+  .clickzone{
+    position:absolute;
+    top:0; bottom:46px;
+    width:42%;
+    z-index:10;
+    cursor:pointer;
+  }
+  .clickzone.left{left:0;}
+  .clickzone.right{right:0;}
+
+  .edge-hint{
+    position:absolute;
+    top:0; bottom:46px;
+    width:42%;
+    z-index:9;
+    display:flex;
+    align-items:center;
+    font-family:'Jost',sans-serif;
+    font-size:22px;
+    color:var(--gold);
+    opacity:0;
+    transition:opacity .2s ease;
+    pointer-events:none;
+  }
+  .edge-hint.left{left:0; justify-content:flex-start; padding-left:8px;}
+  .edge-hint.right{right:0; justify-content:flex-end; padding-right:8px;}
+  .clickzone.left:hover ~ .edge-hint.left,
+  .clickzone.right:hover ~ .edge-hint.right{opacity:.25;}
+
+  .footer-bar{
+    flex:0 0 auto;
+    height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    font-family:'Jost',sans-serif;
+    font-size:11.5px;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+    border-top:1px solid rgba(0,0,0,.07);
+    position:relative;
+    z-index:11;
+  }
+  .progress-track{
+    width:120px; height:3px;
+    background:rgba(0,0,0,.1);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--gold);
+    transition:width .25s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="book-wrap">
+    <div class="stack s2"></div>
+    <div class="stack s1"></div>
+    <div class="book" id="book">
+      <div class="ribbon"></div>
+      <div class="running-header" id="runningHeader"></div>
+      <div class="content-area">
+        <div class="page-content" id="pageContent"></div>
+        <div class="clickzone left" id="zoneLeft"></div>
+        <div class="clickzone right" id="zoneRight"></div>
+        <div class="edge-hint left">‹</div>
+        <div class="edge-hint right">›</div>
+      </div>
+      <div class="footer-bar">
+        <span id="pageNum">1</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="pageTotal">103</span>
+      </div>
+    </div>
+  </div>
+  <button class="nav-btn prev" id="btnPrev">‹</button>
+  <button class="nav-btn next" id="btnNext">›</button>
+</div>
+
+<script>
+const pages = [
+{type:"cover"},
+{type:"dedication", text:`Hurmatli Fotimaxon opa,
+
+ushbu kitobni Sizga — mening sinf rahbarim, ustozim va yo'l ko'rsatuvchimga bag'ishlayman.
+Har bir sahifada Sizdan o'rgangan narsalarim, mehringiz va talabchanligingiz mujassam.
+
+Rahmat, ustozim.`, sign:"Muhammad Yusuf Xo'jayev"},
+
+{type:"text", ch:"Muqaddima", text:`Bu kitobni yozishga qaror qilganimda, o'zimga bir savol berdim: ustozimga eng qadrli sovg'a nima bo'lishi mumkin? Gullar so'lib qoladi, sovg'alar unutiladi, lekin so'z va xotira abadiy qoladi. Shuning uchun men Sizga so'zlarimni — yuragimdagi gaplarni taqdim etishga qaror qildim.`},
+{type:"text", ch:"Muqaddima", text:`Bu kitobda men beshinchi sinfdan to bugungi kungacha bo'lgan yo'limni, Sizning mehringiz va talabchanligingiz orqali qanday o'zgarganimni yozdim. Har bir sahifani o'qiganingizda, men Sizga qanchalik minnatdor ekanimni his qilasiz, deb umid qilaman.`},
+
+{type:"chapter", num:"I", eyebrow:"Birinchi bob", title:"BIRINCHI BOR KO'RGANIMDA", subtitle:"5-sinf"},
+
+{type:"text", ch:"Birinchi bob", text:`Beshinchi sinfda edim. O'sha kuni men kutubxonaga kitob olgani kelgandim — oddiy, kunlardan biri edi. Lekin o'sha kun men hayotimda muhim bo'lib qoladigan bir insonni birinchi marta ko'rdim.`},
+{type:"text", ch:"Birinchi bob", text:`Sizni dahlizda ko'rdim. Boshqa maktabga ketayotgan edingiz — tez, qat'iy qadamlar bilan yurar edingiz. Men hali Sizning kim ekanligingizni bilmasdim.`},
+{type:"text", ch:"Birinchi bob", text:`Rostini aytsam, o'shanda Sizdan qo'rqib ketdim. Qarashingizda shunday jiddiylik bor ediki, men beixtiyor chetga o'tib, yo'l berdim.`},
+{type:"text", ch:"Birinchi bob", text:`O'sha paytlar men kichkina, qo'rqoqroq bola edim. Katta ustozlarni ko'rganimda yuragim "shig'" etib ketardi. Sizni ko'rganimda ham xuddi shunday bo'ldi.`},
+{type:"text", ch:"Birinchi bob", text:`Sizning ismingizni ham bilmasdim o'shanda. Faqat "qattiqqo'l ustoz" degan gap quloqqa chalingan, xolos. Bu gap mening qo'rquvimni yanada kuchaytirgandi.`},
+{type:"text", ch:"Birinchi bob", text:`Kutubxonadan kitobimni olib, sinfimga qaytib ketdim. Lekin o'sha qisqa lahza — Sizni birinchi ko'rganim — xotiramda muhrlanib qoldi.`},
+{type:"text", ch:"Birinchi bob", text:`O'shanda bilmasdim, ammo bir yildan keyin Siz mening sinf rahbarim bo'lasiz, degan taqdir allaqachon yozilgan edi.`},
+{type:"text", ch:"Birinchi bob", text:`Beshinchi sinf davomida Sizni yana bir necha bor ko'rdim — dahlizda, hovlida. Har safar uzoqdan kuzatardim, yaqinlashishga jur'at etolmasdim.`},
+{type:"text", ch:"Birinchi bob", text:`Hozir o'ylasam, kulgili tuyuladi. O'shanda Sizning mehribonligingizni bilmasdim-da. Faqat tashqi qiyofangizdagi jiddiylikni ko'rgandim.`},
+{type:"text", ch:"Birinchi bob", text:`Bolalar ko'pincha shunday bo'ladi — birinchi taassurot bilan baho beradi. Men ham xuddi shunday qildim va keyinchalik bu xato ekanini angladim.`},
+{type:"text", ch:"Birinchi bob", text:`Beshinchi sinf tugadi. Yozgi ta'til keldi. Lekin men Sizni unutmagandim — g'alati tarzda, xayolimda saqlab qolgandim.`},
+{type:"text", ch:"Birinchi bob", text:`Oltinchi sinfga ko'tarilganimda, sinflar taqsimotini bilganimda yuragim yana "shig'" etdi: mening sinf rahbarim... aynan Siz bo'lib chiqdingiz.`},
+
+{type:"chapter", num:"II", eyebrow:"Ikkinchi bob", title:"ENDI BILA BOSHLADIM", subtitle:"6-sinf"},
+
+{type:"text", ch:"Ikkinchi bob", text:`Oltinchi sinfning birinchi kuni. Sinfga kirib kelganingizda, yana o'sha eski qo'rquv yuragimga qaytdi. Lekin bu safar narsalar boshqacha bo'lib chiqdi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Siz menga algebra va matematikadan dars bera boshladingiz. Birinchi darsdayoq, ovozingizdagi mehr va sabr menga sezildi — bu men kutgan "qattiqqo'l ustoz" emas edi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Darslaringiz qiziqarli edi. Murakkab formulalarni ham sodda qilib tushuntirar edingiz, har bir o'quvchiga alohida e'tibor berardingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`Kunlar o'tgan sayin, Sizdan qo'rqqanim emas, Sizni hurmat qilayotganimni angladim. Bu ikki tuyg'u o'rtasidagi farqni o'sha paytda tushunib yetdim.`},
+{type:"text", ch:"Ikkinchi bob", text:`Bir kuni darsda IT haqida gapirib qoldim — veb-saytlar, dasturlash haqida. Sizning ko'zlaringizda qiziqish uchqunini ko'rdim.`},
+{type:"text", ch:"Ikkinchi bob", text:`Siz mendan ko'proq so'ray boshladingiz: qanday saytlar qilganman, qanday dasturlardan foydalanaman. Men g'urur bilan hikoya qilib berardim.`},
+{type:"text", ch:"Ikkinchi bob", text:`Sizga o'shanda aytmagandim, lekin men allaqachon o'nlab veb-loyihalar ustida ishlagandim. Siz buni bilib, hayratda qolgandingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`Ana shu suhbatlardan keyin, Siz meni o'zingizning IT bo'yicha shogirtingiz sifatida qabul qildingiz. Bu men uchun katta sharaf edi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Shogird bo'lish oson emas ekan. Siz mendan ko'p narsa talab qila boshladingiz — vaqtni to'g'ri taqsimlash, mas'uliyatni his qilish.`},
+{type:"text", ch:"Ikkinchi bob", text:`Lekin har bir talabingiz ortida mehringiz yashiringanini sezardim. Siz meni qattiq tutardingiz, chunki menga ishonardingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`Matematika darslaringizda formulalardan tashqari, hayot haqida ham gapirib berardingiz. Har bir misol orqasida bir hikmat bor edi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Sinf rahbari sifatida Siz nafaqat bizning bilimimiz, balki xarakterimiz haqida ham qayg'urardingiz. Bu meni hayratda qoldirardi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Eslayman, bir kuni uy vazifasini bajarmay kelgandim. Siz meni qattiq tanbeh berdingiz, lekin keyin alohida chaqirib, sababini so'radingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`O'sha kuni tushundimki, Sizning qattiqligingiz — g'azab emas, balki mendan yaxshi natija kutganingizning belgisi ekan.`},
+{type:"text", ch:"Ikkinchi bob", text:`Kunlar o'tib, sinfdoshlarim orasida ham Siz haqingizda gap-so'zlar ko'paydi. Hammasi bir ovozdan: "Fotimaxon opa talabchan, lekin adolatli", deyishardi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Men bu fikrga to'liq qo'shilardim. Siz hech qachon birovni boshqasidan ustun qo'ymasdingiz — hammaga bir xil adolat bilan munosabatda bo'lardingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`Oltinchi sinf davomida matematikadan bilimim sezilarli darajada oshdi. Bu — Sizning mehnatingiz va sabringiz natijasi edi.`},
+{type:"text", ch:"Ikkinchi bob", text:`Endi darslarga qo'rqib emas, qiziqish bilan kelar edim. Bu o'zgarish faqat bir yil ichida sodir bo'lgandi — Sizning tufayli.`},
+{type:"text", ch:"Ikkinchi bob", text:`Siz menga shogird sifatida ko'proq mas'uliyat berdingiz — kichik loyihalarda yordam berishni, sinfdoshlarimga IT bo'yicha tushuntirishni topshirdingiz.`},
+{type:"text", ch:"Ikkinchi bob", text:`Bu meni o'qituvchilik nima ekanini ham bir oz tushunishimga yordam berdi. Bilimni boshqalarga ulashish — qanday mas'uliyatli ish ekan.`},
+
+{type:"chapter", num:"III", eyebrow:"Uchinchi bob", title:"USTOZNING NASIHATLARI", subtitle:"har bir so'zda hikmat bor edi"},
+
+{type:"text", ch:"Uchinchi bob", text:`Sizning eng ko'p takrorlagan nasihatingiz shu edi: "Darslarga vaqtida kiring, baholaringizni doim yuqori tuting." Bu so'zlarni necha marta eshitganimni sanab bo'lmaydi.`},
+{type:"text", ch:"Uchinchi bob", text:`Avvaliga bu gaplar oddiy nasihat bo'lib tuyulardi. Lekin vaqt o'tgan sayin, ularning ortida chuqur ma'no borligini angladim.`},
+{type:"text", ch:"Uchinchi bob", text:`Vaqtida kelish — faqat intizom emas, balki o'zingga va atrofdagilarga hurmat ko'rsatish ekan. Siz buni menga amalda o'rgatdingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Bir marta darsga kech qolganimda, Siz meni jazolamadingiz — faqat: "Vaqt — eng qimmatli boylik, uni behuda sarflama", dedingiz. Bu gap yodimda qoldi.`},
+{type:"text", ch:"Uchinchi bob", text:`Baholar haqida ham ko'p gapirardingiz. "Baho — bu shunchaki raqam emas, bu sening mehnating va bilimingning ko'zgusi", derdingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Bu so'zlar meni yanada ko'proq harakat qilishga undadi. Endi men baho uchun emas, bilim uchun o'qiy boshladim.`},
+{type:"text", ch:"Uchinchi bob", text:`Siz menga shuni ham o'rgatdingiz: xato qilishdan qo'rqma, lekin xatongdan saboq ol. Bu gap men uchun katta dars bo'ldi.`},
+{type:"text", ch:"Uchinchi bob", text:`Matematika misollarini yechishda xato qilganimda, Siz hech qachon kamsitmasdingiz. Aksincha, "Yana bir bor urinib ko'r", deb qo'llab-quvvatlardingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Sizning yana bir nasihatingiz: "Bilim — hech kim sendan tortib ololmaydigan yagona boylik." Bu so'zlarni hayotim davomida unutmasligimga ishonchim komil.`},
+{type:"text", ch:"Uchinchi bob", text:`Intizom haqida ham ko'p gapirardingiz. "Intizomli bo'lmagan bola, qanchalik aqlli bo'lmasin, maqsadiga yetolmaydi", derdingiz doim.`},
+{type:"text", ch:"Uchinchi bob", text:`Bu so'zlar menga kunlik rejam tuzishni, vaqtimni to'g'ri taqsimlashni o'rgatdi. Endi har bir kunim aniq maqsad bilan boshlanadi.`},
+{type:"text", ch:"Uchinchi bob", text:`Siz meni faqat matematikadan emas, hayotdan ham dars berardingiz. Har bir suhbatimiz menga yangi bir saboq olib kelardi.`},
+{type:"text", ch:"Uchinchi bob", text:`Eslayman, imtihon oldidan hayajonlanganimda, Siz: "Tayyorgarliging yaxshi bo'lsa, hayajonlanishga o'rin qolmaydi", deb tinchlantirgandingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Bu gap haqiqatan ham yordam berdi. O'shandan beri, imtihonlarga tayyorgarlik ko'rishni jiddiy qabul qiladigan bo'ldim.`},
+{type:"text", ch:"Uchinchi bob", text:`Siz hech qachon "buni qila olmaysan" demasdingiz. Aksincha, "Harakat qil, ko'rasan — qila olasan", deb ishonch bag'ishlardingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Bu ishonch menga juda katta kuch berardi. Sizning so'zlaringiz ortida turgan ishonch tufayli, men o'zimga ham ko'proq ishona boshladim.`},
+{type:"text", ch:"Uchinchi bob", text:`Siz bizga adolat haqida ham gapirardingiz. "Har doim to'g'ri yo'lni tanla, hatto u qiyin bo'lsa ham", deb nasihat qilardingiz.`},
+{type:"text", ch:"Uchinchi bob", text:`Bu so'zlar mening xarakterimni shakllantirishga katta hissa qo'shdi. Endi qiyin tanlovlar oldida, Sizning ovozingizni eslayman.`},
+
+{type:"chapter", num:"IV", eyebrow:"To'rtinchi bob", title:"TALABCHAN VA MEHRIBON", subtitle:"ikki fazilat — bitta yurakda"},
+
+{type:"text", ch:"To'rtinchi bob", text:`Sizni bir so'z bilan ta'riflash mumkin emas. Siz ham talabchan, ham mehribon ustozsiz — bu ikki xususiyat Sizda ajoyib uyg'unlikda mavjud.`},
+{type:"text", ch:"To'rtinchi bob", text:`Darslarda Siz hech kimga yengillik bermasdingiz. Har bir o'quvchidan o'z imkoniyati darajasida eng yaxshisini talab qilardingiz.`},
+{type:"text", ch:"To'rtinchi bob", text:`Lekin dars tugashi bilan, Siz boshqa odamga aylanardingiz — mehribon, g'amxo'r, har birimizning ahvolimiz bilan qiziqadigan ustozga.`},
+{type:"text", ch:"To'rtinchi bob", text:`Bir kuni kayfiyatim tushkun bo'lib, darsda jim o'tirgandim. Siz buni darrov payqab, dars tugagach yonimga kelib so'radingiz: "Nima bo'ldi?"`},
+{type:"text", ch:"To'rtinchi bob", text:`O'sha kuni Sizning g'amxo'rligingizni chinakam his qildim. Siz nafaqat o'qituvchi, balki onaday g'amxo'r inson ekaningizni angladim.`},
+{type:"text", ch:"To'rtinchi bob", text:`Talabchanligingiz tufayli men dangasalikni unutdim. Mehribonligingiz tufayli esa, hech qachon yolg'iz emasligimni his qildim.`},
+{type:"text", ch:"To'rtinchi bob", text:`Sinfdoshlarim orasida ham Siz haqingizda bir xil fikr bor: "Fotimaxon opadan qo'rqamiz, lekin uni juda yaxshi ko'ramiz."`},
+{type:"text", ch:"To'rtinchi bob", text:`Bu — g'alati, lekin chuqur haqiqat. Sizning qattiqligingiz bizni intizomli qildi, mehringiz esa bizni Sizga bog'ladi.`},
+{type:"text", ch:"To'rtinchi bob", text:`Siz hech qachon adolatsizlik qilmasdingiz. Kim qanchalik harakat qilsa, shunga yarasha baho va munosabat ko'rsatardingiz.`},
+{type:"text", ch:"To'rtinchi bob", text:`Ba'zan Sizning talabchanligingizdan charchab ketardim. Lekin keyin natijani ko'rganimda, bu charchoqqa arzigan ekan, deb o'ylardim.`},
+{type:"text", ch:"To'rtinchi bob", text:`Mehribonligingiz faqat so'zlarda emas, ishlarda ham namoyon bo'lardi. Qiynalgan o'quvchiga qo'shimcha vaqt ajratib, alohida tushuntirib berardingiz.`},
+{type:"text", ch:"To'rtinchi bob", text:`Siz hech kimni "yomon o'quvchi" deb atamasdingiz. Har birimizda nimadir yaxshi tomon borligiga ishonardingiz va shuni topishga harakat qilardingiz.`},
+{type:"text", ch:"To'rtinchi bob", text:`Bu ikki xususiyatning — talabchanlik va mehribonlikning — birgalikda bo'lishi, haqiqiy ustozning belgisi ekanini Sizdan o'rgandim.`},
+{type:"text", ch:"To'rtinchi bob", text:`Endi men ham, kelajakda kimnidir o'rgatadigan bo'lsam, Sizdek bo'lishni orzu qilaman — qattiq, lekin mehribon.`},
+
+{type:"chapter", num:"V", eyebrow:"Beshinchi bob", title:"SERTIFIKATLARIM VA FAXRIM", subtitle:"shogird sifatida erishganlarim"},
+
+{type:"text", ch:"Beshinchi bob", text:`O'tgan yillar davomida men IT sohasida ko'plab bilim va ko'nikmalar to'pladim. Bu yo'lda olgan har bir sertifikat — mening mehnatim mevasi edi.`},
+{type:"text", ch:"Beshinchi bob", text:`Bir kuni Sizga olgan sertifikatlarimni ko'rsatishga qaror qildim. Yuragim hapqirib turardi — Siz qanday baho berarkin, deb.`},
+{type:"text", ch:"Beshinchi bob", text:`Sizga oltita sertifikatimni ko'rsatdim — veb-dasturlash, sun'iy intellekt va kiberxavfsizlik sohalaridan olgan bilimlarimning natijasi edi.`},
+{type:"text", ch:"Beshinchi bob", text:`Siz har bir sertifikatni diqqat bilan ko'rib chiqdingiz. Ko'zlaringizda g'urur va quvonchni payqadim — bu men uchun eng katta mukofot edi.`},
+{type:"text", ch:"Beshinchi bob", text:`Siz: "Mana shogirdimning natijasi", deb kulimsiradingiz. Bu so'zlardan keyin, men o'zimni dunyoning eng baxtli o'quvchisidek his qildim.`},
+{type:"text", ch:"Beshinchi bob", text:`O'sha kun meni yanada ko'proq harakat qilishga ilhomlantirdi. Sizning ishonchingizni oqlash — mening eng katta maqsadlarimdan biriga aylandi.`},
+{type:"text", ch:"Beshinchi bob", text:`Har bir yangi sertifikat olganimda, birinchi o'ylagan odamim Siz bo'lardingiz: "Fotimaxon opaga ko'rsataman", deb.`},
+{type:"text", ch:"Beshinchi bob", text:`Siz menga shogird sifatida nafaqat bilim, balki maqsadga intilishni ham o'rgatdingiz. Bu fazilat hayotimning har bir sohasida menga yordam beradi.`},
+{type:"text", ch:"Beshinchi bob", text:`Bugun orqaga qarab, mana shu yo'lning boshida Sizning ishonchingiz turganini ko'raman. Rahmat, ustozim, menga ishonganingiz uchun.`},
+
+{type:"chapter", num:"VI", eyebrow:"Oltinchi bob", title:"7-SINF, BUGUNGI KUNLARIM", subtitle:"yo'l davom etmoqda"},
+
+{type:"text", ch:"Oltinchi bob", text:`Endi yettinchi sinfdaman. Vaqt qanchalik tez o'tganini sezmay ham qoldim — go'yo kecha beshinchi sinfda Sizni birinchi ko'rganimday.`},
+{type:"text", ch:"Oltinchi bob", text:`Bugun ham Siz mening sinf rahbarim, ustozim va eng katta qo'llab-quvvatlovchimsiz. Bu davomiylik men uchun katta omad.`},
+{type:"text", ch:"Oltinchi bob", text:`Matematika va algebradan bilimim ancha mustahkamlandi. Bu — Sizning sabringiz va mehnatingiz tufayli erishgan natija.`},
+{type:"text", ch:"Oltinchi bob", text:`IT sohasidagi loyihalarim ham davom etmoqda. Har safar yangi narsa yaratganimda, Sizning "Davom et, sendan ko'p narsa kutaman" degan so'zlaringizni eslayman.`},
+{type:"text", ch:"Oltinchi bob", text:`Siz menga shogird sifatida berilgan vazifalarni endi yanada katta mas'uliyat bilan bajarishni o'rgandim. Bu — kattalashayotganimning belgisi, deb o'ylayman.`},
+{type:"text", ch:"Oltinchi bob", text:`Sinfdoshlarim bilan munosabatlarim ham yaxshilandi — Sizdan o'rgangan adolat va sabr tufayli ularga ko'proq yordam berishga harakat qilaman.`},
+{type:"text", ch:"Oltinchi bob", text:`Ba'zan kichik qiyinchiliklarga duch kelaman, lekin Sizning nasihatlaringiz har doim yo'l ko'rsatuvchi yulduz bo'lib qoladi.`},
+{type:"text", ch:"Oltinchi bob", text:`Bugun men nafaqat bilimli, balki Sizdan o'rgangan qadriyatlarga ega bo'lgan o'quvchiman — vaqtga rioya qilish, mas'uliyat, adolat va mehnatsevarlik.`},
+{type:"text", ch:"Oltinchi bob", text:`Yettinchi sinf hali davom etmoqda, lekin men bilamanki, qaysi sinfda bo'lmayin, Sizning ustozligingiz mening hayotimning bir qismi bo'lib qoladi.`},
+
+{type:"chapter", num:"VII", eyebrow:"Yettinchi bob", title:"MINNATDORCHILIK", subtitle:"so'nggi so'zlar"},
+
+{type:"text", ch:"Yettinchi bob", text:`Fotimaxon opa, ushbu kitobning oxiriga yetib kelarkanmiz, Sizga aytmoqchi bo'lgan eng muhim so'z — rahmat.`},
+{type:"text", ch:"Yettinchi bob", text:`Rahmat, meni beshinchi sinfdagi qo'rqoq boladan, bugungi ishonchli, maqsadli o'quvchiga aylantirganingiz uchun.`},
+{type:"text", ch:"Yettinchi bob", text:`Rahmat, qattiqqo'lligingiz uchun — bu meni intizomli qildi. Rahmat, mehringiz uchun — bu meni hech qachon yolg'iz qoldirmadi.`},
+{type:"text", ch:"Yettinchi bob", text:`Rahmat, meni IT bo'yicha shogirdingiz sifatida qabul qilganingiz uchun. Bu ishonch mening eng katta boyligimga aylandi.`},
+{type:"text", ch:"Yettinchi bob", text:`Rahmat, har bir nasihatingiz uchun — vaqtga rioya qilish, baholarga e'tibor berish, adolatli bo'lish haqidagi so'zlaringiz hayotim davomida men bilan qoladi.`},
+{type:"text", ch:"Yettinchi bob", text:`Siz menga shuni o'rgatdingiz: haqiqiy ustoz — shunchaki bilim beruvchi emas, balki hayot yo'lini ko'rsatuvchi inson ekan.`},
+{type:"text", ch:"Yettinchi bob", text:`Bu kitobni yozar ekanman, har bir sahifada Sizga bo'lgan hurmat va minnatdorchiligimni ifoda etishga harakat qildim.`},
+{type:"text", ch:"Yettinchi bob", text:`Bilaman, so'zlar Sizning men uchun qilgan barcha yaxshiliklaringizni to'liq ifoda eta olmaydi. Lekin bu — mening qalbimdan chiqqan eng sodda va samimiy hadya.`},
+
+{type:"dedication", text:`Ushbu kitobni Sizga maxsus bir kunda — bitiruv marosimimiz kunida topshirishni rejalashtirganman.
+
+Bu kun meni Siz bilan o'tgan barcha yillarni — qo'rquvdan hurmatga, hurmatdan mehrga aylangan yo'limizni — abadiy eslatib turadi.`},
+
+{type:"closing", label:"Yakuniy so'z", text:`Chin yurakdan,
+
+Muhammad Yusuf Xo'jayev
+45-maktab, 7-sinf`, footer:`Fotimaxon opaga — mening ustozimga, yo'l ko'rsatuvchimga va eng katta qo'llab-quvvatlovchimga abadiy minnatdorman.`}
+];
+
+let current = 0;
+const total = pages.length;
+
+const pageContentEl = document.getElementById('pageContent');
+const runningHeaderEl = document.getElementById('runningHeader');
+const pageNumEl = document.getElementById('pageNum');
+const pageTotalEl = document.getElementById('pageTotal');
+const progressFillEl = document.getElementById('progressFill');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const zoneLeft = document.getElementById('zoneLeft');
+const zoneRight = document.getElementById('zoneRight');
+
+pageTotalEl.textContent = total;
+
+function renderPage(idx){
+  const p = pages[idx];
+  let html = "";
+  let header = "";
+
+  if(p.type === "cover"){
+    html = `
+      <div class="cover">
+        <div class="cover-frame"></div>
+        <div class="seal">МЮ</div>
+        <div class="cover-eyebrow">Bag'ishlangan kitob</div>
+        <div class="cover-title">Mening Ustozim</div>
+        <div class="cover-subtitle">Fotimaxon opa bilan xotiralarim</div>
+        <div class="cover-divider"></div>
+        <div class="cover-author">Muhammad Yusuf Xo'jayev</div>
+        <div class="cover-school">45-maktab · 7-sinf</div>
+        <div class="cover-hint">Davom etish uchun o'ng tomonni bosing →</div>
+      </div>`;
+  } else if(p.type === "dedication"){
+    html = `
+      <div class="feature">
+        <div class="feature-frame"></div>
+        <div class="feature-label">Bag'ishlov</div>
+        <div class="feature-text">${p.text}</div>
+        ${p.sign ? `<div class="feature-sign">${p.sign}</div>` : ``}
+      </div>`;
+  } else if(p.type === "chapter"){
+    html = `
+      <div class="chapter">
+        <div class="chapter-num">${p.num}</div>
+        <div class="chapter-eyebrow">${p.eyebrow}</div>
+        <div class="chapter-title">${p.title}</div>
+        <div class="chapter-rule"></div>
+        <div class="chapter-subtitle">${p.subtitle}</div>
+      </div>`;
+    header = p.eyebrow;
+  } else if(p.type === "closing"){
+    html = `
+      <div class="feature">
+        <div class="feature-frame"></div>
+        <div class="feature-label">${p.label}</div>
+        <div class="feature-text">${p.text}</div>
+        <div class="feature-sign">${p.footer}</div>
+      </div>`;
+  } else {
+    const prevIsChapter = idx > 0 && pages[idx-1].type === "chapter";
+    html = `<p class="body-text${prevIsChapter ? ' dropcap' : ''}">${p.text}</p>`;
+    header = p.ch || "";
+  }
+
+  pageContentEl.innerHTML = html;
+  runningHeaderEl.textContent = header;
+  pageNumEl.textContent = idx + 1;
+  progressFillEl.style.width = ((idx+1)/total*100) + "%";
+
+  btnPrev.classList.toggle('disabled', idx === 0);
+  btnNext.classList.toggle('disabled', idx === total-1);
+}
+
+function goTo(idx){
+  if(idx < 0 || idx >= total || idx === current) return;
+  current = idx;
+  pageContentEl.classList.add('fading');
+  setTimeout(()=>{
+    renderPage(current);
+    pageContentEl.classList.remove('fading');
+  }, 180);
+}
+
+function next(){ goTo(current+1); }
+function prev(){ goTo(current-1); }
+
+zoneRight.addEventListener('click', next);
+zoneLeft.addEventListener('click', prev);
+btnNext.addEventListener('click', next);
+btnPrev.addEventListener('click', prev);
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight' || e.key === ' ') next();
+  if(e.key === 'ArrowLeft') prev();
+});
+
+let touchStartX = null;
+document.addEventListener('touchstart', (e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', (e)=>{
+  if(touchStartX === null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 50){
+    if(dx < 0) next(); else prev();
+  }
+  touchStartX = null;
+}, {passive:true});
+
+renderPage(current);
+</script>
+</body>
+</html>
